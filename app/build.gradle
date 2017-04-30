@@ -19,22 +19,6 @@ android {
     }
 }
 
-/* ---------------------------------- Android Annotations ----------------------------------- */
-
-/**
- * This mess is only created to add Android Annotations Library to the project.
- * For further details on how to create a mess in code is defined in the following link:
- * https://github.com/androidannotations/androidannotations/wiki/Building-Project-Gradle
- */
-def androidAnnotationsLibVersion = '4.3.0'
-
-dependencies {
-    annotationProcessor "org.androidannotations:androidannotations:$androidAnnotationsLibVersion"
-    compile "org.androidannotations:androidannotations-api:$androidAnnotationsLibVersion"
-}
-
-/* ------------------------------------------------------------------------------------------ */
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
