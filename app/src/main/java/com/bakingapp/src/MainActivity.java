@@ -15,6 +15,9 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -23,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-//    @ViewById(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
     @Override
@@ -36,7 +38,16 @@ public class MainActivity extends AppCompatActivity {
     private void getRecipes() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
         BakingRecipeServiceEndpoint serviceEndpoint = retrofit.create(BakingRecipeServiceEndpoint.class);
-        List<Recipe> recipeList = serviceEndpoint.getRecipes();
-        Log.d(LOG_TAG, String.valueOf(recipeList.size()));
+        serviceEndpoint.getRecipes().enqueue(new Callback<List<Recipe>>() {
+            @Override
+            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                Log.d(LOG_TAG, String.valueOf(response.body().size()));
+            }
+
+            @Override
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }
