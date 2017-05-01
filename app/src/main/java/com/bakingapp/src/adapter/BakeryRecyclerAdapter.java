@@ -1,10 +1,12 @@
 package com.bakingapp.src.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bakingapp.R;
 import com.bakingapp.src.model.Recipe;
@@ -24,7 +26,6 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_adapter_recipe, parent, false);
-        view.setFocusable(true);
         return new ViewHolder(view);
     }
 
@@ -47,6 +48,7 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
 
         public ViewHolder(View itemView) {
             super(itemView);
+            itemView.setFocusable(true);
             recipeNameTextView = (TextView) itemView.findViewById(R.id.recipe_name_text);
             itemView.setOnClickListener(clickListener);
         }
@@ -54,7 +56,7 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.e("BakeryRecyclerAdapter", "Item Clicked");
             }
         };
     }
