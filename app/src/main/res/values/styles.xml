@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="recycler_parent_style">
+        <item name="android:background">@drawable/item_touch_selector</item>
+    </style>
+
+    <style name="recycler_item_style" parent="recycler_parent_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?android:attr/listPreferredItemHeight</item>
+        <item name="android:layout_margin">@dimen/recipe_item_margin</item>
+    </style>
+
 </resources>

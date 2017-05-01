@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="recipe_item_margin">1dp</dimen>
-    <dimen name="recipe_item_height">?android:attr/listPreferredItemHeight</dimen>
+    <!--Cannot reference a resource other than a resource of the same type-->
+    <!--<dimen name="recipe_item_height">?android:attr/listPreferredItemHeight</dimen>-->
 </resources>

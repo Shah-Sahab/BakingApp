@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/recipe_item_height"
-    android:layout_margin="@dimen/recipe_item_margin"
-    android:elevation="@dimen/cardview_default_elevation">
-    <!--?android:attr/listPreferredItemHeight-->
+    style="@style/recycler_item_style">
 
     <TextView
         android:id="@+id/recipe_name_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"/>

@@ -23,8 +23,9 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ViewHolder viewHolder = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_adapter_recipe, parent, false));
-        return viewHolder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_adapter_recipe, parent, false);
+        view.setFocusable(true);
+        return new ViewHolder(view);
     }
 
     @Override
@@ -47,7 +48,15 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
         public ViewHolder(View itemView) {
             super(itemView);
             recipeNameTextView = (TextView) itemView.findViewById(R.id.recipe_name_text);
+            itemView.setOnClickListener(clickListener);
         }
+
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        };
     }
 
 }

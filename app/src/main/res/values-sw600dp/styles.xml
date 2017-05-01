@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="recycler_item_style" parent="recycler_parent_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?android:attr/listPreferredItemHeightLarge</item>
+        <item name="android:layout_margin">@dimen/recipe_item_margin</item>
+    </style>
+
+</resources>
