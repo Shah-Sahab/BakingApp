@@ -3,6 +3,8 @@
 
     <style name="recycler_parent_style">
         <item name="android:elevation">@dimen/cardview_default_elevation</item>
-        <item name="android:background">@drawable/item_touch_selector</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
     </style>
+
+
 </resources>

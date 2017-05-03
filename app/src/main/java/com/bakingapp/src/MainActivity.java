@@ -12,7 +12,6 @@ import com.bakingapp.src.adapter.BakeryRecyclerAdapter;
 import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
 import com.bakingapp.src.model.Recipe;
 
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private BakeryRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initRecyclerView();
         getRecipes();
     }

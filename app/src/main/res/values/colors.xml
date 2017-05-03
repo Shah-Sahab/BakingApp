@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#9FB209</color>
+    <color name="colorPrimaryDark">#808F0A</color>
     <color name="colorAccent">#FF4081</color>
     <color name="activated">#E0E0E0</color>
     <color name="white">#FFFFFF</color>
+    <color name="parrot_green">#93b204</color>
+    <color name="colorLogo">#d27c00</color>
 </resources>
