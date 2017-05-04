@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
 
     @Override
     public void onClickListener(Recipe recipe) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(this, RecipeStepsActivity.class);
         intent.putExtra(Intent.EXTRA_REFERRER, recipe);
         startActivity(intent);
     }
