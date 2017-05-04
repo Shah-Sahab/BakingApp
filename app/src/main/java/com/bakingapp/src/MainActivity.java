@@ -1,5 +1,6 @@
 package com.bakingapp.src;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +20,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BakeryRecyclerAdapter.BakeryAdapterClickHandler{
 
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 if (totalRecipes == 0) {
                     return;
                 }
-                mAdapter = new BakeryRecyclerAdapter(response.body());
+                mAdapter = new BakeryRecyclerAdapter(response.body(), MainActivity.this);
                 mRecyclerView.setAdapter(mAdapter);
             }
 
@@ -77,5 +78,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onClickListener(Recipe recipe) {
+        Intent intent = new Intent();
+        intent.putExtra(Intent.EXTRA_REFERRER, recipe);
+        startActivity(intent);
     }
 }

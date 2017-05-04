@@ -16,10 +16,16 @@ import com.bakingapp.src.model.Recipe;
 
 public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAdapter.ViewHolder> {
 
-    private Recipe[] mRecipeData;
+    public interface BakeryAdapterClickHandler {
+        void onClickListener(Recipe recipe);
+    }
 
-    public BakeryRecyclerAdapter(Recipe[] recipes) {
+    private Recipe[] mRecipeData;
+    private BakeryAdapterClickHandler mClickHandler;
+
+    public BakeryRecyclerAdapter(Recipe[] recipes, BakeryAdapterClickHandler clickHandler) {
         mRecipeData = recipes;
+        mClickHandler = clickHandler;
     }
 
     @Override
@@ -41,7 +47,7 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
     /**
      * I don't want anyone extending this class and so hence the keyword final
      */
-    public static final class ViewHolder extends RecyclerView.ViewHolder {
+    public final class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView recipeNameTextView;
 
@@ -55,7 +61,9 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("BakeryRecyclerAdapter", "Item Clicked");
+                Recipe recipe = mRecipeData[getAdapterPosition()];
+                mClickHandler.onClickListener(recipe);
+                Log.e("BakeryRecyclerAdapter", "Recipe= " + recipe.getName());
             }
         };
     }
