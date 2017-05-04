@@ -16,12 +16,12 @@ import com.bakingapp.src.model.Recipe;
 
 public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAdapter.ViewHolder> {
 
+    private Recipe[] mRecipeData;
+    private BakeryAdapterClickHandler mClickHandler;
+
     public interface BakeryAdapterClickHandler {
         void onClickListener(Recipe recipe);
     }
-
-    private Recipe[] mRecipeData;
-    private BakeryAdapterClickHandler mClickHandler;
 
     public BakeryRecyclerAdapter(Recipe[] recipes, BakeryAdapterClickHandler clickHandler) {
         mRecipeData = recipes;
