@@ -18,6 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name=".src.RecipeStepsActivity"
             android:label="@string/title_activity_recipe_steps"
@@ -26,6 +27,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.bakingapp.src.MainActivity"/>
+        </activity>
+
+        <activity
+            android:name=".src.RecipeStepDetailsActivity"
+            android:label="@string/title_activity_recipe_steps_details"
+            android:parentActivityName=".src.MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.bakingapp.src.RecipeStepsActivity"/>
         </activity>
     </application>
 

@@ -5,7 +5,7 @@
     android:id="@+id/recycler_view_steps"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bakingapp.src.RecipeStepsActivityFragment"
+    tools:context="com.bakingapp.src.RecipeStepsFragment"
     android:scrollbars="vertical"
     tools:showIn="@layout/activity_recipe_steps" />
 

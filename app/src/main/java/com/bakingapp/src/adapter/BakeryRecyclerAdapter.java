@@ -1,7 +1,6 @@
 package com.bakingapp.src.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +62,6 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
             public void onClick(View view) {
                 Recipe recipe = mRecipeData[getAdapterPosition()];
                 mClickHandler.onClickListener(recipe);
-                Log.e("BakeryRecyclerAdapter", "Recipe= " + recipe.getName());
             }
         };
     }
