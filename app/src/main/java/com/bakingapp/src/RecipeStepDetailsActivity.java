@@ -18,13 +18,13 @@ public class RecipeStepDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
-//
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//        Recipe recipe = getIntent().getExtras().getParcelable(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE);
-//        toolbar.setTitle(recipe.getName());
-//        setTitle(recipe.getName());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Recipe recipe = getIntent().getExtras().getParcelable(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE);
+        toolbar.setTitle(recipe.getName());
+        setTitle(recipe.getName());
     }
 }

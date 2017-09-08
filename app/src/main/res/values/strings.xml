@@ -3,6 +3,7 @@
     <string name="title_activity_recipe_steps">Recipe Steps</string>
     <string name="title_activity_recipe_steps_details">Recipe Name</string>
     <string name="action_settings">Settings</string>
+    <string name="next">Next</string>
 
 
 </resources>
