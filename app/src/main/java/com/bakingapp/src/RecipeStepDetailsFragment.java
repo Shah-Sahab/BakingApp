@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bakingapp.R;
@@ -41,7 +42,10 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     private Recipe recipe;
     private int recipeStep;
 
-    private TextView descriptionTextView;
+    private TextView mDescriptionTextView;
+    private Button mNextButton;
+    private Button mPreviousButton;
+
 
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
@@ -66,11 +70,40 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_step_details, container, false);
-        descriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
-        descriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
+
+        mDescriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
+        mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
+
+        mPreviousButton = (Button) mRootView.findViewById(R.id.previous_button);
+        mPreviousButton.setOnClickListener(mPreviousButtonClickListener);
+
+        mNextButton = (Button) mRootView.findViewById(R.id.next_button);
+        mNextButton.setOnClickListener(mNextButtonClickListener);
         initSimpleExoPlayerView();
         return mRootView;
     }
+
+    private View.OnClickListener mNextButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (recipeStep < recipe.getSteps().size() - 1) {
+                ++recipeStep;
+                mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
+                initializePlayer(Uri.parse(recipe.getSteps().get(recipeStep).getVideoURL()));
+            }
+        }
+    };
+
+    private View.OnClickListener mPreviousButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (recipeStep > 0) {
+                --recipeStep;
+                mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
+                initializePlayer(Uri.parse(recipe.getSteps().get(recipeStep).getVideoURL()));
+            }
+        }
+    };
 
     private void initSimpleExoPlayerView() {
         // Initialize the player view.
@@ -80,8 +113,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
                         (getResources(), android.R.drawable.presence_video_online));
         // Initialize the Media Session.
         initializeMediaSession();
-        Log.e(TAG, "Step Number: " + recipeStep);
-        Log.e(TAG, "Video URL: " + recipe.getSteps().get(recipeStep).getVideoURL());
+
         // Initialize the player.
         initializePlayer(Uri.parse(recipe.getSteps().get(recipeStep).getVideoURL()));
     }
@@ -91,6 +123,10 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
      * @param mediaUri The URI of the sample to play.
      */
     private void initializePlayer(Uri mediaUri) {
+
+        Log.e(TAG, "Step Number: " + recipeStep);
+        Log.e(TAG, "Video URL: " + recipe.getSteps().get(recipeStep).getVideoURL());
+
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -102,7 +138,13 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
             mExoPlayer.addListener(this);
 
             // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getContext(), "ClassicalMusicQuiz");
+            String userAgent = Util.getUserAgent(getContext(), "Recipe Step Details");
+            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+            mExoPlayer.prepare(mediaSource);
+            mExoPlayer.setPlayWhenReady(true);
+        } else {
+            mExoPlayer.stop();
+            String userAgent = Util.getUserAgent(getContext(), "Recipe Step Details");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
