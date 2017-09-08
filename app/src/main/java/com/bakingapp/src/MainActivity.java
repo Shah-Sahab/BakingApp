@@ -23,7 +23,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements BakeryRecyclerAdapter.BakeryAdapterClickHandler{
 
-    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
+    // http://go.udacity.com/android-baking-app-json
+//    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
+    private static final String BASE_URL = "http://go.udacity.com/";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     RecyclerView mRecyclerView;

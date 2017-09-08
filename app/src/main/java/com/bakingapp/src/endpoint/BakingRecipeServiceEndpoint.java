@@ -10,6 +10,7 @@ import retrofit2.http.GET;
  */
 
 public interface BakingRecipeServiceEndpoint {
-    @GET("topher/2017/March/58d1537b_baking/baking.json")
+//    @GET("topher/2017/March/58d1537b_baking/baking.json")
+    @GET("android-baking-app-json")
     Call<Recipe[]> getRecipes();
 }

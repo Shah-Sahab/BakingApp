@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bakingapp.R;
 import com.bakingapp.src.model.Recipe;
@@ -40,6 +41,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     private Recipe recipe;
     private int recipeStep;
 
+    private TextView descriptionTextView;
+
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
@@ -63,6 +66,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_step_details, container, false);
+        descriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
+        descriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
         initSimpleExoPlayerView();
         return mRootView;
     }
