@@ -52,3 +52,5 @@
     </LinearLayout>
 
 </LinearLayout>
+
+<!--Although the same layout could be made for just layout-sw600dp to avoid handling os extra use cases-->
