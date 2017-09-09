@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.bakingapp.R;
 import com.bakingapp.src.model.Recipe;
+import com.bakingapp.src.util.Constants;
 
 /**
  * Created by Psych on 9/6/17.
@@ -23,7 +24,7 @@ public class RecipeStepDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Recipe recipe = getIntent().getExtras().getParcelable(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE);
+        Recipe recipe = getIntent().getExtras().getParcelable(Constants.BUNDLE_EXTRA_RECIPE);
         toolbar.setTitle(recipe.getName());
         setTitle(recipe.getName());
     }

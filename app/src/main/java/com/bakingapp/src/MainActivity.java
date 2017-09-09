@@ -13,6 +13,7 @@ import com.bakingapp.R;
 import com.bakingapp.src.adapter.BakeryRecyclerAdapter;
 import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
 import com.bakingapp.src.model.Recipe;
+import com.bakingapp.src.util.Constants;
 
 
 import retrofit2.Call;
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
     @Override
     public void onClickListener(Recipe recipe) {
         Intent intent = new Intent(this, RecipeStepsActivity.class);
-        intent.putExtra(Intent.EXTRA_REFERRER, recipe);
+        intent.putExtra(Constants.BUNDLE_EXTRA_RECIPE, recipe);
         startActivity(intent);
     }
 }

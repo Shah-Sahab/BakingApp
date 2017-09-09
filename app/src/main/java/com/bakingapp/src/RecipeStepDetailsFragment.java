@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bakingapp.R;
 import com.bakingapp.src.model.Recipe;
+import com.bakingapp.src.util.Constants;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -41,8 +42,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
 
     private View mRootView;
 
-    private Recipe recipe;
-    private int recipeStep;
+    private Recipe mRecipe;
+    private int mRecipeStep;
 
     private TextView mDescriptionTextView;
     private Button mNextButton;
@@ -59,7 +60,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(RECIPE_STEP, recipeStep);
+        outState.putInt(RECIPE_STEP, mRecipeStep);
         super.onSaveInstanceState(outState);
     }
 
@@ -68,12 +69,12 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         super.onCreate(savedInstanceState);
         Bundle bundle = getActivity().getIntent().getExtras();
         if (bundle != null) {
-            recipe = bundle.getParcelable(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE);
-            recipeStep = bundle.getInt(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE_STEP_NUMBER);
+            mRecipe = bundle.getParcelable(Constants.BUNDLE_EXTRA_RECIPE);
+            mRecipeStep = bundle.getInt(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE_STEP_NUMBER);
         }
 
         if (savedInstanceState != null) {
-            recipeStep = savedInstanceState.getInt(RECIPE_STEP);
+            mRecipeStep = savedInstanceState.getInt(RECIPE_STEP);
         }
 
     }
@@ -88,14 +89,14 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         // If its landscape Layout it will not contain the container_constraint_layout
         if (mRootView.findViewById(R.id.container_constraint_layout) == null) {
             return mRootView;
-        } else if (getResources().getBoolean(R.bool.isTablet)) {
+        } else if (getResources().getBoolean(R.bool.isTablet) && getResources().getBoolean(R.bool.isLandscape)) {
             mDescriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
-            mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
+            mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
             return mRootView;
         }
 
         mDescriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
-        mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
+        mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
 
         mPreviousButton = (Button) mRootView.findViewById(R.id.previous_button);
         mPreviousButton.setOnClickListener(mPreviousButtonClickListener);
@@ -109,10 +110,10 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     private View.OnClickListener mNextButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (recipeStep < recipe.getSteps().size() - 1) {
-                ++recipeStep;
-                mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
-                initializePlayer(Uri.parse(recipe.getSteps().get(recipeStep).getVideoURL()));
+            if (mRecipeStep < mRecipe.getSteps().size() - 1) {
+                ++mRecipeStep;
+                mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
+                initializePlayer(Uri.parse(mRecipe.getSteps().get(mRecipeStep).getVideoURL()));
             }
         }
     };
@@ -120,13 +121,19 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     private View.OnClickListener mPreviousButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (recipeStep > 0) {
-                --recipeStep;
-                mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
-                initializePlayer(Uri.parse(recipe.getSteps().get(recipeStep).getVideoURL()));
+            if (mRecipeStep > 0) {
+                --mRecipeStep;
+                mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
+                initializePlayer(Uri.parse(mRecipe.getSteps().get(mRecipeStep).getVideoURL()));
             }
         }
     };
+
+    public void showRecipeStepDetails(int recipeStep) {
+        mRecipeStep = recipeStep;
+        initializePlayer(Uri.parse(mRecipe.getSteps().get(mRecipeStep).getVideoURL()));
+        mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
+    }
 
     private void initSimpleExoPlayerView() {
         // Initialize the player view.
@@ -138,7 +145,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         initializeMediaSession();
 
         // Initialize the player.
-        initializePlayer(Uri.parse(recipe.getSteps().get(recipeStep).getVideoURL()));
+        initializePlayer(Uri.parse(mRecipe.getSteps().get(mRecipeStep).getVideoURL()));
     }
 
     /**
@@ -147,8 +154,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
      */
     private void initializePlayer(Uri mediaUri) {
 
-        Log.e(TAG, "Step Number: " + recipeStep);
-        Log.e(TAG, "Video URL: " + recipe.getSteps().get(recipeStep).getVideoURL());
+        Log.e(TAG, "Step Number: " + mRecipeStep);
+        Log.e(TAG, "Video URL: " + mRecipe.getSteps().get(mRecipeStep).getVideoURL());
 
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
