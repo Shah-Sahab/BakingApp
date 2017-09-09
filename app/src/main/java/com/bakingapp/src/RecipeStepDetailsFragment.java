@@ -35,6 +35,8 @@ import com.google.android.exoplayer2.util.Util;
 
 public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.EventListener {
 
+    private final String RECIPE_STEP = "Recipe_Step";
+
     private static final String TAG = RecipeStepDetailsFragment.class.getSimpleName();
 
     private View mRootView;
@@ -46,7 +48,6 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     private Button mNextButton;
     private Button mPreviousButton;
 
-
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
@@ -57,6 +58,12 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(RECIPE_STEP, recipeStep);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getActivity().getIntent().getExtras();
@@ -64,12 +71,24 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
             recipe = bundle.getParcelable(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE);
             recipeStep = bundle.getInt(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE_STEP_NUMBER);
         }
+
+        if (savedInstanceState != null) {
+            recipeStep = savedInstanceState.getInt(RECIPE_STEP);
+        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_step_details, container, false);
+
+        initSimpleExoPlayerView();
+
+        // If its landscape Layout it will not contain the container_constraint_layout
+        if (mRootView.findViewById(R.id.container_constraint_layout) == null) {
+            return mRootView;
+        }
 
         mDescriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
         mDescriptionTextView.setText(recipe.getSteps().get(recipeStep).getDescription());
@@ -79,7 +98,6 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
 
         mNextButton = (Button) mRootView.findViewById(R.id.next_button);
         mNextButton.setOnClickListener(mNextButtonClickListener);
-        initSimpleExoPlayerView();
         return mRootView;
     }
 
