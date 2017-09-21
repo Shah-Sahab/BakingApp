@@ -50,8 +50,13 @@
         <service
             android:name=".src.widget.ListWidgetService"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            />
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+        <activity
+            android:name=".src.IngredientListActivity"
+            android:label="@string/title_activity_ingredient_list"
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>

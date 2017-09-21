@@ -1,6 +1,7 @@
 package com.bakingapp.src.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -9,6 +10,7 @@ import com.bakingapp.BuildConfig;
 import com.bakingapp.R;
 import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
 import com.bakingapp.src.model.Recipe;
+import com.bakingapp.src.util.Constants;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -61,6 +63,10 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         rv.setTextViewText(R.id.recipe_name_text, recipeList.get(position).getName());
 
         Log.d(LOG_TAG, recipeList.get(position).getName());
+
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtra(Constants.RECIPE_TAG, recipeList.get(position));
+        rv.setOnClickFillInIntent(R.id.recipe_name_text, fillInIntent);
 
         return rv;
     }

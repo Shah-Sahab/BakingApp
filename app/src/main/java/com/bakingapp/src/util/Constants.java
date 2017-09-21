@@ -6,4 +6,5 @@ package com.bakingapp.src.util;
 
 public class Constants {
     public static final String BUNDLE_EXTRA_RECIPE = "Recipe";
+    public static final String RECIPE_TAG = "RecipeTag";
 }
