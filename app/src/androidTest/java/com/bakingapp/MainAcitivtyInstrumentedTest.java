@@ -1,5 +1,6 @@
 package com.bakingapp;
 
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,7 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
@@ -39,6 +42,7 @@ public class MainAcitivtyInstrumentedTest {
 //        onView(withId(R.id.recycler_view)).perform(click()).check(matches(isDisplayed()));
 //        onData(allOf(is(instanceOf(Recipe.class)), hasEntry(equalTo("Nutella Pie"), is("item: 0")))).perform(click());
 //        onData(allOf(is(instanceOf(Recipe.class)), hasItemInArray(""))).perform(click());
-        onData(anything()).inAdapterView(withId(R.id.recipe_name_text)).atPosition(0).perform(click());
+//        onData(anything()).inAdapterView(withId(R.id.recipe_name_text)).atPosition(0).perform(click());
+        onView(withId(R.id.recipe_name_text)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
     }
 }
