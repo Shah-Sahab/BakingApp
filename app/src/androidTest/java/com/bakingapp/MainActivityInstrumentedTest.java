@@ -45,7 +45,7 @@ import static junit.framework.Assert.assertEquals;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class MainAcitivtyInstrumentedTest {
+public class MainActivityInstrumentedTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mainActivityActivityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
@@ -53,11 +53,11 @@ public class MainAcitivtyInstrumentedTest {
     @Before
     public void setUp() throws Exception {
         mainActivityActivityTestRule.launchActivity(new Intent());
-        try {
-            waitForAsyncTask();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+//        try {
+//            waitForAsyncTask();
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
     }
 
     public static void waitForAsyncTask() throws Throwable {
