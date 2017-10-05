@@ -53,11 +53,11 @@ public class MainActivityInstrumentedTest {
     @Before
     public void setUp() throws Exception {
         mainActivityActivityTestRule.launchActivity(new Intent());
-//        try {
-//            waitForAsyncTask();
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
-//        }
+        try {
+            waitForAsyncTask();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     public static void waitForAsyncTask() throws Throwable {
@@ -89,7 +89,7 @@ public class MainActivityInstrumentedTest {
     }
 
     @Test
-    public void RecycleViewitemCount() {
+    public void RecycleViewItemCount() {
         hasItemCount(4);
     }
 
@@ -97,6 +97,7 @@ public class MainActivityInstrumentedTest {
     public void isRecyclerViewDisplayed() {
         onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
         onView(withId(R.id.recycler_view)).check(matches(isCompletelyDisplayed()));
+//        onView(withId(R.id.recycler_view)).check(doesntHaveViewWithText("Brownies"));
     }
 
     @Test
