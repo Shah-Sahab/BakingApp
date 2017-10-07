@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bakingapp.R;
 import com.bakingapp.src.model.Recipe;
 import com.bakingapp.src.util.Constants;
+import com.bakingapp.src.util.RecipeCache;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -71,6 +72,9 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         if (bundle != null) {
             mRecipe = bundle.getParcelable(Constants.BUNDLE_EXTRA_RECIPE);
             mRecipeStep = bundle.getInt(RecipeStepsFragment.BUNDLE_EXTRA_RECIPE_STEP_NUMBER);
+        } else {
+            mRecipe = RecipeCache.getInstance().getRecipe();
+            mRecipeStep = RecipeCache.getInstance().getRecipeStep();
         }
 
         if (savedInstanceState != null) {

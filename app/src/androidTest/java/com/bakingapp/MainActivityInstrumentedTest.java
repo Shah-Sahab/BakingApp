@@ -17,17 +17,15 @@ import android.view.View;
 
 import com.bakingapp.src.MainActivity;
 import com.bakingapp.src.adapter.BakeryRecyclerAdapter;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.common.truth.Truth;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.ArrayList;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -35,7 +33,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.view.View.FIND_VIEWS_WITH_TEXT;
 import static com.googlecode.eyesfree.utils.LogUtils.TAG;
 import static junit.framework.Assert.assertEquals;
 
@@ -51,8 +48,9 @@ public class MainActivityInstrumentedTest {
     public ActivityTestRule<MainActivity> mainActivityActivityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
 
     @Before
-    public void setUp() throws Exception {
+    public void init() throws Exception {
         mainActivityActivityTestRule.launchActivity(new Intent());
+        // downloading the json takes some millisecs
         try {
             waitForAsyncTask();
         } catch (Throwable throwable) {
@@ -69,7 +67,7 @@ public class MainActivityInstrumentedTest {
             protected Integer doInBackground(String... params) {
                 Log.d(TAG, "doInBackground() called with: params = [" + params + "]");
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ignored) {
                 }
                 return params.length;
@@ -97,12 +95,12 @@ public class MainActivityInstrumentedTest {
     public void isRecyclerViewDisplayed() {
         onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
         onView(withId(R.id.recycler_view)).check(matches(isCompletelyDisplayed()));
-//        onView(withId(R.id.recycler_view)).check(doesntHaveViewWithText("Brownies"));
     }
 
     @Test
-    public void zClickRecyclerViewItem() {
+    public void clickRecyclerViewItem() {
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnHolderItem(withRecipeName("Brownies"), click()));
+
     }
 
     public static Matcher<RecyclerView.ViewHolder> withRecipeName(final String recipeName) {
@@ -153,50 +151,27 @@ public class MainActivityInstrumentedTest {
         };
     }
 
-    public static ViewAssertion hasHolderItemAtPosition(final int index, final Matcher<RecyclerView.ViewHolder> viewHolderMatcher) {
-        return new ViewAssertion() {
-            @Override
-            public void check(View view, NoMatchingViewException noViewFoundException) {
-                if (!(view instanceof RecyclerView)) {
-                    throw noViewFoundException;
-                }
-                RecyclerView rv = (RecyclerView) view;
-                Assert.assertThat(rv.findViewHolderForAdapterPosition(index), viewHolderMatcher);
-            }
-        };
+    public void mediaPlayerTest() {
+        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.playerView)).perform(getExoPlayerViewAction());
     }
 
-    public static ViewAssertion hasViewWithTextAtPosition(final int index, final CharSequence text) {
-        return new ViewAssertion() {
+    public static ViewAction getExoPlayerViewAction() {
+        return new ViewAction() {
             @Override
-            public void check(View view, NoMatchingViewException noViewFoundException) {
-                if (!(view instanceof RecyclerView)) {
-                    throw noViewFoundException;
-                }
-                RecyclerView rv = (RecyclerView) view;
-                ArrayList<View> outViews = new ArrayList<>();
-                rv.findViewHolderForAdapterPosition(index).itemView.findViewsWithText(outViews, text, FIND_VIEWS_WITH_TEXT);
-                Truth.assert_().withMessage("There's no view at index " + index + " of recyclerview that has text : " + text)
-                                .that(outViews).isNotEmpty();
+            public Matcher<View> getConstraints() {
+                return null;
             }
-        };
-    }
 
-    public static ViewAssertion doesntHaveViewWithText(final String text) {
-        return new ViewAssertion() {
             @Override
-            public void check(View view, NoMatchingViewException e) {
-                if (!(view instanceof RecyclerView)) {
-                    throw e;
-                }
-                RecyclerView rv = (RecyclerView) view;
-                ArrayList<View> outviews = new ArrayList<>();
-                for (int index = 0; index < rv.getAdapter().getItemCount(); index++) {
-                    rv.findViewHolderForAdapterPosition(index).itemView.findViewsWithText(outviews, text,
-                                    FIND_VIEWS_WITH_TEXT);
-                    if (outviews.size() > 0) break;
-                }
-                Truth.assertThat(outviews).isEmpty();
+            public String getDescription() {
+                return "Accessing Exo Player Play Button";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.playerView);
+                simpleExoPlayerView.performClick();
             }
         };
     }

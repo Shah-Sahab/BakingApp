@@ -14,6 +14,7 @@ import com.bakingapp.src.adapter.BakeryRecyclerAdapter;
 import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
 import com.bakingapp.src.model.Recipe;
 import com.bakingapp.src.util.Constants;
+import com.bakingapp.src.util.RecipeCache;
 
 
 import retrofit2.Call;
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
 
     @Override
     public void onClickListener(Recipe recipe) {
+        // Only for running instrumentation test
+        RecipeCache.getInstance().setRecipe(recipe);
+
         Intent intent = new Intent(this, RecipeStepsActivity.class);
         intent.putExtra(Constants.BUNDLE_EXTRA_RECIPE, recipe);
         startActivity(intent);

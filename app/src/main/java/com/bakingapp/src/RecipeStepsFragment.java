@@ -15,6 +15,7 @@ import com.bakingapp.R;
 import com.bakingapp.src.adapter.RecipeStepsAdapter;
 import com.bakingapp.src.model.Recipe;
 import com.bakingapp.src.util.Constants;
+import com.bakingapp.src.util.RecipeCache;
 
 import static com.bakingapp.src.util.Constants.BUNDLE_EXTRA_RECIPE;
 
@@ -49,7 +50,10 @@ public class RecipeStepsFragment extends Fragment implements RecipeStepsAdapter.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getActivity().getIntent().getExtras();
-        if (extras != null) {
+        // To run instrumentation test, caching the recipe
+        if (extras == null) {
+            recipe = RecipeCache.getInstance().getRecipe();
+        } else if (extras != null) {
             recipe = extras.getParcelable(Constants.BUNDLE_EXTRA_RECIPE);
         }
     }
@@ -77,6 +81,9 @@ public class RecipeStepsFragment extends Fragment implements RecipeStepsAdapter.
     public void onClickListener(Recipe recipe, int stepNumber) {
         Log.e(TAG, "Recipe Name = " + recipe.getName());
         Log.e(TAG, "Recipe Step# " + stepNumber);
+
+        // For instrumentation test, caching the step
+        RecipeCache.getInstance().setRecipeStep(stepNumber);
 
         // mListItemClickHandler will only be instantiated if the device is a tablet.
         // Therefore if its a tablet, RecipeStepDetailsActivity doesn't need to be started, hence the return
