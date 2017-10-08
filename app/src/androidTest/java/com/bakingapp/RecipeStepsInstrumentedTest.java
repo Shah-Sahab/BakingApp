@@ -57,12 +57,10 @@ public class RecipeStepsInstrumentedTest {
             if (recipes == null || recipes.length == 0) {
                 return;
             } else {
-//                Arrays.asList(recipes);
                 Intent intent = new Intent();
                 intent.putExtra(Constants.BUNDLE_EXTRA_RECIPE, recipes[0]);
                 activityTestRule.launchActivity(intent);
                 activityTestRule.getActivity().getSupportFragmentManager().beginTransaction();
-//                activityTestRule.getActivity().getFragmentManager().beginTransaction();
             }
         }
 

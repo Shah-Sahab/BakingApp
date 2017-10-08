@@ -37,28 +37,27 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
     private static final String BASE_URL = "http://go.udacity.com/";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    Recipe[] recipes;
     RecyclerView mRecyclerView;
     private BakeryRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     // Idling resource will be null in production
-//    @Nullable
-//    private SimpleIdlingResource mIdlingResource;
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
-    CountingIdlingResource mIdlingResource;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mIdlingResource = new CountingIdlingResource("Download Recipes");
+        getRecipes();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         initRecyclerView();
-        getRecipes();
     }
 
     /**
@@ -77,10 +76,12 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
             mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new BakeryRecyclerAdapter(recipes, MainActivity.this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void getRecipes() {
-        mIdlingResource.increment();
+        setIdleState(false);
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
         BakingRecipeServiceEndpoint serviceEndpoint = retrofit.create(BakingRecipeServiceEndpoint.class);
         serviceEndpoint.getRecipes().enqueue(new Callback<Recipe[]>() {
@@ -92,9 +93,8 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
                 if (totalRecipes == 0) {
                     return;
                 }
-                mAdapter = new BakeryRecyclerAdapter(response.body(), MainActivity.this);
-                mRecyclerView.setAdapter(mAdapter);
-                mIdlingResource.decrement();
+                recipes = response.body();
+                setIdleState(true);
             }
 
             @Override
@@ -103,6 +103,12 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
             }
         });
 
+    }
+
+    private void setIdleState(boolean isIdleNow) {
+        if (mIdlingResource != null) {
+            mIdlingResource.setmIsIdleNow(isIdleNow);
+        }
     }
 
     @Override
@@ -118,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
     /**
      * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
      */
-//    @VisibleForTesting
-//    @NonNull
-//    public IdlingResource getIdlingResource() {
-//        if (mIdlingResource == null) {
-//            mIdlingResource = new SimpleIdlingResource();
-//        }
-//        return mIdlingResource;
-//    }
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
 }
