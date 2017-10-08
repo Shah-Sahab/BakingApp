@@ -50,7 +50,8 @@ public class MainActivityInstrumentedTest {
     @Before
     public void init() throws Exception {
         mainActivityActivityTestRule.launchActivity(new Intent());
-        // downloading the json takes some millisecs
+        // downloading the json takes some millisecs.
+        // Idling resources is not syncing up with Retrofit. Therefore need to use wait for AsyncTask instead.
         try {
             waitForAsyncTask();
         } catch (Throwable throwable) {
@@ -100,7 +101,7 @@ public class MainActivityInstrumentedTest {
     @Test
     public void clickRecyclerViewItem() {
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnHolderItem(withRecipeName("Brownies"), click()));
-
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
     }
 
     public static Matcher<RecyclerView.ViewHolder> withRecipeName(final String recipeName) {
@@ -150,30 +151,4 @@ public class MainActivityInstrumentedTest {
             }
         };
     }
-
-    public void mediaPlayerTest() {
-        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
-        onView(withId(R.id.playerView)).perform(getExoPlayerViewAction());
-    }
-
-    public static ViewAction getExoPlayerViewAction() {
-        return new ViewAction() {
-            @Override
-            public Matcher<View> getConstraints() {
-                return null;
-            }
-
-            @Override
-            public String getDescription() {
-                return "Accessing Exo Player Play Button";
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.playerView);
-                simpleExoPlayerView.performClick();
-            }
-        };
-    }
-
 }

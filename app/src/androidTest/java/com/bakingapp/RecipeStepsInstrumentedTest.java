@@ -9,14 +9,21 @@ import android.support.v7.widget.RecyclerView;
 
 import com.bakingapp.src.RecipeStepsActivity;
 import com.bakingapp.src.adapter.RecipeStepsAdapter;
+import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
+import com.bakingapp.src.model.Recipe;
+import com.bakingapp.src.util.Constants;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -24,6 +31,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static com.bakingapp.MainActivityInstrumentedTest.waitForAsyncTask;
 
 /**
  * Created by Psych on 10/7/17.
@@ -36,8 +44,33 @@ public class RecipeStepsInstrumentedTest {
 
     @Before
     public void init() {
-        activityTestRule.launchActivity(new Intent());
-        activityTestRule.getActivity().getSupportFragmentManager().beginTransaction();
+
+        Recipe[] recipes = null;
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        BakingRecipeServiceEndpoint serviceEndpoint = retrofit.create(BakingRecipeServiceEndpoint.class);
+        try {
+            recipes = serviceEndpoint.getRecipes().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Run back on your feet!
+            if (recipes == null || recipes.length == 0) {
+                return;
+            } else {
+//                Arrays.asList(recipes);
+                Intent intent = new Intent();
+                intent.putExtra(Constants.BUNDLE_EXTRA_RECIPE, recipes[0]);
+                activityTestRule.launchActivity(intent);
+                activityTestRule.getActivity().getSupportFragmentManager().beginTransaction();
+//                activityTestRule.getActivity().getFragmentManager().beginTransaction();
+            }
+        }
+
+        try {
+            waitForAsyncTask();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     @Test

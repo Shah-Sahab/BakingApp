@@ -17,10 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
@@ -40,12 +38,12 @@ public class RecipeStepzDetailsInstrumentedTest {
 
     @Test
     public void checkMediaPlayer() {
-//        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
     public void clickMediaPlayerPlayButton() {
-//        onView(withId(R.id.playerView)).perform(getExoPlayerViewAction());
+        onView(withId(R.id.playerView)).perform(getExoPlayerViewAction());
     }
 
     public static ViewAction getExoPlayerViewAction() {
@@ -67,6 +65,4 @@ public class RecipeStepzDetailsInstrumentedTest {
             }
         };
     }
-
-
 }
