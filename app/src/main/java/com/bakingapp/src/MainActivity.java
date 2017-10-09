@@ -1,12 +1,10 @@
 package com.bakingapp.src;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
     private static final String BASE_URL = "http://go.udacity.com/";
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    Recipe[] recipes;
     RecyclerView mRecyclerView;
     private BakeryRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -52,12 +49,12 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getRecipes();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         initRecyclerView();
+        getRecipes();
     }
 
     /**
@@ -76,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
             mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new BakeryRecyclerAdapter(recipes, MainActivity.this);
-        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     private void getRecipes() {
@@ -93,7 +89,8 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
                 if (totalRecipes == 0) {
                     return;
                 }
-                recipes = response.body();
+                mAdapter = new BakeryRecyclerAdapter(response.body(), MainActivity.this);
+                mRecyclerView.setAdapter(mAdapter);
                 setIdleState(true);
             }
 
@@ -107,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
 
     private void setIdleState(boolean isIdleNow) {
         if (mIdlingResource != null) {
-            mIdlingResource.setmIsIdleNow(isIdleNow);
+            mIdlingResource.setIsIdleNow(isIdleNow);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.bakingapp;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
@@ -45,20 +46,23 @@ import static junit.framework.Assert.assertEquals;
 public class MainActivityInstrumentedTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
 
     private IdlingResource mIdlingResource;
 
     @Before
     public void init() throws Exception {
-//        activityTestRule.launchActivity(new Intent());
+        activityTestRule.launchActivity(new Intent());
         // downloading the json takes some millisecs.
-        // Idling resources is not syncing up with Retrofit. Therefore need to use wait for AsyncTask instead.
-//        try {
-//            waitForAsyncTask();
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
-//        }
+        // Idling resources is full of nonsense. @Before tagged methods wait for the launch of an activity.
+        // What happens when you try to make a webservice call on OnCreate() ? You cannot run the stupid test.
+        // Therefore need to use wait for AsyncTask instead.
+        try {
+            waitForAsyncTask();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
         mIdlingResource = activityTestRule.getActivity().getIdlingResource();
         Espresso.registerIdlingResources(mIdlingResource);
     }
@@ -72,7 +76,7 @@ public class MainActivityInstrumentedTest {
             protected Integer doInBackground(String... params) {
                 Log.d(TAG, "doInBackground() called with: params = [" + params + "]");
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ignored) {
                 }
                 return params.length;

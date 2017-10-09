@@ -3,6 +3,8 @@ package com.bakingapp;
 import android.content.Intent;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.View;
 import com.bakingapp.src.RecipeStepDetailsActivity;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,8 +21,13 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Created by Psych on 10/4/17.
@@ -38,12 +46,32 @@ public class RecipeStepzDetailsInstrumentedTest {
 
     @Test
     public void checkMediaPlayer() {
-        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
+//        onView(withTagValue(is((Object) "exo_player_tag_1"))).check(matches(isCompletelyDisplayed()));
+//        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
+        onView(allOf(withId(R.id.playerView), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
     public void clickMediaPlayerPlayButton() {
-        onView(withId(R.id.playerView)).perform(getExoPlayerViewAction());
+//        onView(withTagValue(withStringMatching("exo_player_tag_1"))).perform(getExoPlayerViewAction());
+//        onView(withTagValue(is((Object)"exo_player_tag_1"))).perform(getExoPlayerViewAction());
+        onView(allOf(withId(R.id.playerView), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))).perform(getExoPlayerViewAction());
+    }
+
+    public static Matcher<Object> withStringMatching(final String tagValue) {
+        checkNotNull(tagValue);
+        return new BoundedMatcher<Object, SimpleExoPlayerView>(SimpleExoPlayerView.class) {
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Matching Simple Exo Player View Tag Value: " + tagValue);
+            }
+
+            @Override
+            protected boolean matchesSafely(SimpleExoPlayerView item) {
+                return item.getTag().toString().equalsIgnoreCase(tagValue);
+            }
+        };
     }
 
     public static ViewAction getExoPlayerViewAction() {

@@ -73,13 +73,15 @@ public class RecipeStepsInstrumentedTest {
 
     @Test
     public void isRecyclerViewDisplayed() {
-        onView(withId(R.id.recycler_view_steps)).check(matches(isDisplayed()));
-        onView(withId(R.id.recycler_view_steps)).check(matches(isCompletelyDisplayed()));
+        // For some reason, recycler id is replaced with fragment id. So have to use it now to run the test.
+        onView(withId(R.id.recipe_step_fragment)).check(matches(isDisplayed()));
+        onView(withId(R.id.recipe_step_fragment)).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
     public void recyclerViewStepTest() {
-        onView(withId(R.id.recycler_view_steps)).perform(RecyclerViewActions.actionOnHolderItem(withRecipeStep("Recipe Introduction"), click()));
+        // For some reason, recycler id is replaced with fragment id. So have to use it now to run the test.
+        onView(withId(R.id.recipe_step_fragment)).perform(RecyclerViewActions.actionOnHolderItem(withRecipeStep("Recipe Introduction"), click()));
     }
 
     public static Matcher<RecyclerView.ViewHolder> withRecipeStep(final String recipeStep) {
