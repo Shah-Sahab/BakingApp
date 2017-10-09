@@ -17,6 +17,7 @@ import com.bakingapp.R;
 import com.bakingapp.src.model.Recipe;
 import com.bakingapp.src.util.Constants;
 import com.bakingapp.src.util.RecipeCache;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -38,6 +39,7 @@ import com.google.android.exoplayer2.util.Util;
 public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.EventListener {
 
     private final String RECIPE_STEP = "Recipe_Step";
+    private final String PLAYER_POSITION = "PlayerPosition";
 
     private static final String TAG = RecipeStepDetailsFragment.class.getSimpleName();
 
@@ -45,6 +47,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
 
     private Recipe mRecipe;
     private int mRecipeStep;
+    private long mPlayerPosition;
 
     private TextView mDescriptionTextView;
     private Button mNextButton;
@@ -62,6 +65,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(RECIPE_STEP, mRecipeStep);
+        outState.putLong(PLAYER_POSITION, mExoPlayer.getCurrentPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -79,8 +83,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
 
         if (savedInstanceState != null) {
             mRecipeStep = savedInstanceState.getInt(RECIPE_STEP);
+            mPlayerPosition = savedInstanceState.getLong(PLAYER_POSITION);
         }
-
     }
 
     @Override
@@ -175,6 +179,9 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
             String userAgent = Util.getUserAgent(getContext(), "Recipe Step Details");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
+            if (mPlayerPosition != C.TIME_UNSET) {
+                mExoPlayer.seekTo(mPlayerPosition);
+            }
             mExoPlayer.setPlayWhenReady(true);
         } else {
             mExoPlayer.stop();
