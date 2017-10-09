@@ -3,6 +3,7 @@ package com.bakingapp;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
@@ -17,11 +18,11 @@ import android.view.View;
 
 import com.bakingapp.src.MainActivity;
 import com.bakingapp.src.adapter.BakeryRecyclerAdapter;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.common.truth.Truth;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,18 +46,25 @@ import static junit.framework.Assert.assertEquals;
 public class MainActivityInstrumentedTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mainActivityActivityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
+    public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class, false, false);
+
+    private IdlingResource mIdlingResource;
 
     @Before
     public void init() throws Exception {
-        mainActivityActivityTestRule.launchActivity(new Intent());
+        activityTestRule.launchActivity(new Intent());
         // downloading the json takes some millisecs.
-        // Idling resources is not syncing up with Retrofit. Therefore need to use wait for AsyncTask instead.
+        // Idling resources is full of nonsense. @Before tagged methods wait for the launch of an activity.
+        // What happens when you try to make a webservice call on OnCreate() ? You cannot run the stupid test.
+        // Therefore need to use wait for AsyncTask instead.
         try {
             waitForAsyncTask();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+
+        mIdlingResource = activityTestRule.getActivity().getIdlingResource();
+        Espresso.registerIdlingResources(mIdlingResource);
     }
 
     public static void waitForAsyncTask() throws Throwable {
@@ -68,7 +76,7 @@ public class MainActivityInstrumentedTest {
             protected Integer doInBackground(String... params) {
                 Log.d(TAG, "doInBackground() called with: params = [" + params + "]");
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException ignored) {
                 }
                 return params.length;
@@ -100,7 +108,7 @@ public class MainActivityInstrumentedTest {
 
     @Test
     public void clickRecyclerViewItem() {
-        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnHolderItem(withRecipeName("Brownies"), click()));
+//        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnHolderItem(withRecipeName("Brownies"), click()));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
     }
 
@@ -150,5 +158,12 @@ public class MainActivityInstrumentedTest {
                 Truth.assertThat(rv.getAdapter().getItemCount()).isEqualTo(count);
             }
         };
+    }
+
+    @After
+    public void unregisterIdlingResource() {
+        if (mIdlingResource != null) {
+            Espresso.unregisterIdlingResources(mIdlingResource);
+        }
     }
 }

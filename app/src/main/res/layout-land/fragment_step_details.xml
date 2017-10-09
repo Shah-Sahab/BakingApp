@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/playerView"
+    android:tag="@string/exo_player_tag_2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:resize_mode="fill"

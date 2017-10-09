@@ -8,5 +8,8 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="title_activity_ingredient_list">List of Ingredients</string>
+    <string name="exo_player_tag_1">exo_player_tag_1</string>
+    <string name="exo_player_tag_2">exo_player_tag_2</string>
+    <string name="exo_player_tag_3">exo_player_tag_3</string>
     <!--<string name="shared_prefs_key">private_mode_prefs</string>-->
 </resources>
