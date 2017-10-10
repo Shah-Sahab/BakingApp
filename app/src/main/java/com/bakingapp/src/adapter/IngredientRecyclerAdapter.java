@@ -46,7 +46,7 @@ public class IngredientRecyclerAdapter extends RecyclerView.Adapter<IngredientRe
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setFocusable(true);
-            ingredientTextView = (TextView) itemView.findViewById(R.id.recipe_name_text);
+            ingredientTextView = (TextView) itemView.findViewById(R.id.recipe_ingredient_item);
         }
 
     }

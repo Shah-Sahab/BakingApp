@@ -17,14 +17,24 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
 
     private Recipe[] mRecipeData;
     private BakeryAdapterClickHandler mClickHandler;
+    private ItemPositionClickListener mItemPositionClickListener;
 
     public interface BakeryAdapterClickHandler {
         void onClickListener(Recipe recipe);
     }
 
+    public interface ItemPositionClickListener {
+        void onClickListener(int recipeId);
+    }
+
     public BakeryRecyclerAdapter(Recipe[] recipes, BakeryAdapterClickHandler clickHandler) {
         mRecipeData = recipes;
         mClickHandler = clickHandler;
+    }
+
+    public BakeryRecyclerAdapter(Recipe[] recipes, ItemPositionClickListener itemPositionClickListener) {
+        mRecipeData = recipes;
+        mItemPositionClickListener = itemPositionClickListener;
     }
 
     @Override
@@ -53,7 +63,7 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setFocusable(true);
-            recipeNameTextView = (TextView) itemView.findViewById(R.id.recipe_name_text);
+            recipeNameTextView = (TextView) itemView.findViewById(R.id.recipe_ingredient_item);
             itemView.setOnClickListener(clickListener);
         }
 
@@ -61,7 +71,13 @@ public class BakeryRecyclerAdapter extends RecyclerView.Adapter<BakeryRecyclerAd
             @Override
             public void onClick(View view) {
                 Recipe recipe = mRecipeData[getAdapterPosition()];
-                mClickHandler.onClickListener(recipe);
+                if (mClickHandler != null) {
+                    mClickHandler.onClickListener(recipe);
+                }
+
+                if (mItemPositionClickListener != null) {
+                    mItemPositionClickListener.onClickListener(mRecipeData[getAdapterPosition()].getId());
+                }
             }
         };
     }

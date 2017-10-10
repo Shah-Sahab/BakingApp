@@ -11,5 +11,6 @@
     <string name="exo_player_tag_1">exo_player_tag_1</string>
     <string name="exo_player_tag_2">exo_player_tag_2</string>
     <string name="exo_player_tag_3">exo_player_tag_3</string>
-    <!--<string name="shared_prefs_key">private_mode_prefs</string>-->
+    <string name="shared_prefs_key">private_mode_prefs</string>
+    <string name="recipe_Id">recipe_id</string>
 </resources>

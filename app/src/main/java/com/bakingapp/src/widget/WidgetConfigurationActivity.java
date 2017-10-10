@@ -1,26 +1,21 @@
-package com.bakingapp.src;
+package com.bakingapp.src.widget;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
-import android.support.test.espresso.IdlingResource;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.bakingapp.R;
-import com.bakingapp.src.IdlingResource.SimpleIdlingResource;
 import com.bakingapp.src.adapter.BakeryRecyclerAdapter;
 import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
 import com.bakingapp.src.model.Recipe;
-import com.bakingapp.src.util.Constants;
-import com.bakingapp.src.util.RecipeCache;
-
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,33 +23,36 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements BakeryRecyclerAdapter.BakeryAdapterClickHandler {
+public class WidgetConfigurationActivity extends AppCompatActivity implements BakeryRecyclerAdapter.ItemPositionClickListener {
 
-    // http://go.udacity.com/android-baking-app-json
-//    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
     private static final String BASE_URL = "http://go.udacity.com/";
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = WidgetConfigurationActivity.class.getSimpleName();
+
+    private int mAppWidgetId;
 
     RecyclerView mRecyclerView;
     private BakeryRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    // Idling resource will be null in production
-    @Nullable
-    private SimpleIdlingResource mIdlingResource;
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_widget_configuration);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         initRecyclerView();
         getRecipes();
+        initAppWidgetId();
+    }
+
+    private void initAppWidgetId() {
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
     }
 
     /**
@@ -73,11 +71,9 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
             mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
-
     }
 
     private void getRecipes() {
-        setIdleState(false);
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
         BakingRecipeServiceEndpoint serviceEndpoint = retrofit.create(BakingRecipeServiceEndpoint.class);
         serviceEndpoint.getRecipes().enqueue(new Callback<Recipe[]>() {
@@ -89,9 +85,8 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
                 if (totalRecipes == 0) {
                     return;
                 }
-                mAdapter = new BakeryRecyclerAdapter(response.body(), MainActivity.this);
+                mAdapter = new BakeryRecyclerAdapter(response.body(), WidgetConfigurationActivity.this);
                 mRecyclerView.setAdapter(mAdapter);
-                setIdleState(true);
             }
 
             @Override
@@ -99,34 +94,27 @@ public class MainActivity extends AppCompatActivity implements BakeryRecyclerAda
                 t.printStackTrace();
             }
         });
-
-    }
-
-    private void setIdleState(boolean isIdleNow) {
-        if (mIdlingResource != null) {
-            mIdlingResource.setIsIdleNow(isIdleNow);
-        }
     }
 
     @Override
-    public void onClickListener(Recipe recipe) {
-        // Only for running instrumentation test
-        RecipeCache.getInstance().setRecipe(recipe);
+    public void onClickListener(int recipeItemId) {
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.shared_prefs_key), MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(getString(R.string.recipe_Id), recipeItemId);
+        editor.commit();
 
-        Intent intent = new Intent(this, RecipeStepsActivity.class);
-        intent.putExtra(Constants.BUNDLE_EXTRA_RECIPE, recipe);
-        startActivity(intent);
-    }
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.recipe_widget);
+        appWidgetManager.updateAppWidget(mAppWidgetId, views);
+        appWidgetManager.notifyAppWidgetViewDataChanged(mAppWidgetId, R.id.recipe_list);
 
-    /**
-     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
-     */
-    @VisibleForTesting
-    @NonNull
-    public IdlingResource getIdlingResource() {
-        if (mIdlingResource == null) {
-            mIdlingResource = new SimpleIdlingResource();
-        }
-        return mIdlingResource;
+        Intent broadcastIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, this, RecipeWidgetProvider.class);
+        broadcastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { mAppWidgetId });
+        sendBroadcast(broadcastIntent);
+
+        Intent intent = new Intent();
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

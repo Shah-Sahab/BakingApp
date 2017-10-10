@@ -2,6 +2,7 @@ package com.bakingapp.src.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -9,6 +10,7 @@ import android.widget.RemoteViewsService;
 import com.bakingapp.BuildConfig;
 import com.bakingapp.R;
 import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
+import com.bakingapp.src.model.Ingredient;
 import com.bakingapp.src.model.Recipe;
 import com.bakingapp.src.util.Constants;
 
@@ -19,6 +21,8 @@ import java.util.List;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by Psych on 9/17/17.
  */
@@ -27,7 +31,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     private static final String LOG_TAG = ListRemoteViewsFactory.class.getSimpleName();
     Context mContext;
-    private List<Recipe> recipeList;
+    private List<Ingredient> ingredientList;
 
     public ListRemoteViewsFactory(Context pContext) {
         mContext = pContext;
@@ -41,7 +45,16 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     @Override
     public void onDataSetChanged() {
         Log.d(LOG_TAG, "onDataSetChanged");
-        recipeList = getRecipes();
+
+        List<Recipe> recipeList = getRecipes();
+        SharedPreferences preferences = mContext.getSharedPreferences(mContext.getString(R.string.shared_prefs_key), MODE_PRIVATE);
+        int recipeId = preferences.getInt(mContext.getString(R.string.recipe_Id), -1);
+        for (Recipe recipe : recipeList) {
+            if (recipe.getId() == recipeId) {
+                ingredientList = recipe.getIngredients();
+                break;
+            }
+        }
     }
 
     @Override
@@ -52,7 +65,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     @Override
     public int getCount() {
         Log.d(LOG_TAG, "getCount");
-        return recipeList == null ? 0 : recipeList.size();
+        return ingredientList == null ? 0 : ingredientList.size();
     }
 
     @Override
@@ -60,13 +73,15 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         Log.d(LOG_TAG, "getViewAt");
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget);
-        rv.setTextViewText(R.id.recipe_name_text, recipeList.get(position).getName());
+        rv.setTextViewText(R.id.recipe_ingredient_item, ingredientList.get(position).getIngredient());
 
-        Log.d(LOG_TAG, recipeList.get(position).getName());
+        Log.d(LOG_TAG, ingredientList.get(position).getIngredient());
 
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(Constants.RECIPE_TAG, recipeList.get(position));
-        rv.setOnClickFillInIntent(R.id.recipe_name_text, fillInIntent);
+        Ingredient[] ingredients = new Ingredient[ingredientList.size()];
+        ingredients = ingredientList.toArray(ingredients);
+        fillInIntent.putExtra(Constants.INGREDIENT_TAG, ingredients);
+        rv.setOnClickFillInIntent(R.id.recipe_ingredient_item, fillInIntent);
 
         return rv;
     }
@@ -86,7 +101,8 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     @Override
     public long getItemId(int position) {
         Log.d(LOG_TAG, "getItemId");
-        return recipeList.get(position).getId();
+//        return ingredientList.get(position).getId();
+        return position;
     }
 
     @Override
@@ -105,6 +121,7 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
      * @return List<Recipe>
      */
     private List<Recipe> getRecipes() {
+
         Recipe[] recipes = null;
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
         BakingRecipeServiceEndpoint serviceEndpoint = retrofit.create(BakingRecipeServiceEndpoint.class);
