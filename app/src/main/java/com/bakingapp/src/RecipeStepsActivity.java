@@ -9,6 +9,8 @@ import android.view.View;
 
 import com.bakingapp.R;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+
 public class RecipeStepsActivity extends AppCompatActivity {
 
     RecipeStepsFragment recipeStepsFragment;
@@ -24,7 +26,7 @@ public class RecipeStepsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // If and only if its a tablet
-        if (getResources().getBoolean(R.bool.isTablet)) {
+        if (getResources().getBoolean(R.bool.isTablet) && getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
             recipeStepsFragment = (RecipeStepsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_recipe_steps_list);
             recipeStepDetailsFragment = (RecipeStepDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_recipe_steps_details);
 
