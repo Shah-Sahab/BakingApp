@@ -73,7 +73,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(RECIPE_STEP, mRecipeStep);
-        outState.putLong(PLAYER_POSITION, mExoPlayer.getCurrentPosition());
+        outState.putLong(PLAYER_POSITION, mPlayerPosition);
         super.onSaveInstanceState(outState);
     }
 
@@ -100,8 +100,6 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_step_details, container, false);
 
-        initSimpleExoPlayerView();
-
         // If its landscape Layout it will not contain the container_constraint_layout
         if (mRootView.findViewById(R.id.container_constraint_layout) == null) {
             return mRootView;
@@ -121,6 +119,19 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         mNextButton.setOnClickListener(mNextButtonClickListener);
 
         return mRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initSimpleExoPlayerView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+        mMediaSession.setActive(false);
     }
 
     private View.OnClickListener mNextButtonClickListener = new View.OnClickListener() {
@@ -265,19 +276,10 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
      * Release ExoPlayer.
      */
     private void releasePlayer() {
+        mPlayerPosition = mExoPlayer.getCurrentPosition();
         mExoPlayer.stop();
         mExoPlayer.release();
         mExoPlayer = null;
-    }
-
-    /**
-     * Release the player when the activity is destroyed.
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-        mMediaSession.setActive(false);
     }
 
     // -----------------------------------Exo Player Event Listener Impl---------------------------------------------
