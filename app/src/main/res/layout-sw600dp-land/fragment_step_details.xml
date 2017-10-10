@@ -42,5 +42,4 @@
         app:layout_constraintTop_toTopOf="@id/horizontalHalf"
         />
 
-
 </android.support.constraint.ConstraintLayout>

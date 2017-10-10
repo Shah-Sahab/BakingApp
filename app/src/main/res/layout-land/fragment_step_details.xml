@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.exoplayer2.ui.SimpleExoPlayerView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/playerView"
-    android:tag="@string/exo_player_tag_2"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:resize_mode="fill"
-    />
+    android:layout_height="match_parent">
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag="@string/exo_player_tag_2"
+        app:resize_mode="fill"
+        />
+
+</FrameLayout>
