@@ -1,9 +1,13 @@
 package com.bakingapp.src;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -35,6 +39,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.EventListener {
 
@@ -57,6 +63,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
+
+    private Bitmap mThumbnailBitmap;
 
     public RecipeStepDetailsFragment() {
         // Required empty public constructor
@@ -144,11 +152,16 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
     }
 
     private void initSimpleExoPlayerView() {
+        // Loading Thumbnail Url
+        loadVideoThumbnail(mRecipe.getSteps().get(mRecipeStep).getThumbnailURL());
+
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) mRootView.findViewById(R.id.playerView);
-        // Load the question mark as the background image until the user answers the question.
-        mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                        (getResources(), android.R.drawable.presence_video_online));
+
+        if (mThumbnailBitmap != null) {
+            // Load the question mark as the background image until the user answers the question.
+            mPlayerView.setDefaultArtwork(mThumbnailBitmap);
+        }
         // Initialize the Media Session.
         initializeMediaSession();
 
@@ -218,6 +231,34 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         mMediaSession.setCallback(new MySessionCallback());
         // Start the Media Session since the activity is active.
         mMediaSession.setActive(true);
+    }
+
+    private void loadVideoThumbnail(String url) {
+        if (url == null || url.isEmpty()) {
+            getDefaultVideoThumbnail();
+            return;
+        }
+        Picasso.with(getContext()).load(url).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                mThumbnailBitmap = bitmap;
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                getDefaultVideoThumbnail();
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        });
+    }
+
+    private void getDefaultVideoThumbnail() {
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) ResourcesCompat.getDrawable(getResources(), android.R.drawable.presence_video_online, null);
+        mThumbnailBitmap = bitmapDrawable.getBitmap();
     }
 
     /**
