@@ -10,6 +10,9 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import com.bakingapp.src.RecipeStepDetailsActivity;
+import com.bakingapp.src.endpoint.BakingRecipeServiceEndpoint;
+import com.bakingapp.src.model.Recipe;
+import com.bakingapp.src.util.Constants;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import org.hamcrest.Description;
@@ -19,13 +22,21 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
+import static com.bakingapp.MainActivityInstrumentedTest.waitForAsyncTask;
+import static com.bakingapp.src.RecipeStepsFragment.BUNDLE_EXTRA_RECIPE_STEP_NUMBER;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -40,22 +51,43 @@ public class RecipeStepzDetailsInstrumentedTest {
 
     @Before
     public void init() {
-        activityTestRule.launchActivity(new Intent());
-        activityTestRule.getActivity().getSupportFragmentManager().beginTransaction();
+
+        Recipe[] recipes = null;
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        BakingRecipeServiceEndpoint serviceEndpoint = retrofit.create(BakingRecipeServiceEndpoint.class);
+        try {
+            recipes = serviceEndpoint.getRecipes().execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Run back on your feet!
+            if (recipes == null || recipes.length == 0) {
+                return;
+            } else {
+                Intent intent = new Intent();
+                intent.putExtra(Constants.BUNDLE_EXTRA_RECIPE, recipes[0]);
+                intent.putExtra(BUNDLE_EXTRA_RECIPE_STEP_NUMBER, recipes[0].getSteps().get(0));
+                activityTestRule.launchActivity(intent);
+                activityTestRule.getActivity().getSupportFragmentManager().beginTransaction();
+            }
+        }
+
+        try {
+            waitForAsyncTask();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
     }
 
     @Test
     public void checkMediaPlayer() {
-//        onView(withTagValue(is((Object) "exo_player_tag_1"))).check(matches(isCompletelyDisplayed()));
-//        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
-//        onView(allOf(withId(R.id.playerView), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed()));
     }
 
     @Test
     public void clickMediaPlayerPlayButton() {
-//        onView(withTagValue(withStringMatching("exo_player_tag_1"))).perform(getExoPlayerViewAction());
-//        onView(withTagValue(is((Object)"exo_player_tag_1"))).perform(getExoPlayerViewAction());
-//        onView(allOf(withId(R.id.playerView), withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))).perform(getExoPlayerViewAction());
+        onView(withId(R.id.playerView)).check(matches(isCompletelyDisplayed())).perform(click());
     }
 
     public static Matcher<Object> withStringMatching(final String tagValue) {
@@ -89,7 +121,9 @@ public class RecipeStepzDetailsInstrumentedTest {
             @Override
             public void perform(UiController uiController, View view) {
                 SimpleExoPlayerView simpleExoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.playerView);
-                simpleExoPlayerView.performClick();
+
+                simpleExoPlayerView.getPlayer().setPlayWhenReady(false);
+
             }
         };
     }
