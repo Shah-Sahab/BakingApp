@@ -165,7 +165,8 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
 
     private void initSimpleExoPlayerView() {
         // Loading Thumbnail Url
-        loadVideoThumbnail(mRecipe.getSteps().get(mRecipeStep).getThumbnailURL());
+        String imageUrl = mRecipe.getSteps().get(mRecipeStep).getThumbnailURL();
+        loadVideoThumbnail(imageUrl == null ? mRecipe.getImage() : imageUrl);
 
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) mRootView.findViewById(R.id.playerView);
