@@ -32,9 +32,6 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
     public RecipeStepsAdapter(Recipe recipe, StepsClickHandler clickHandler) {
         mRecipe           = recipe;
-        // Doing + 1 because the reviewer has been too picky. He wants to show the list of ingredients at the end rather than on the first item of the recycler view.
-        // Therefore to accommodate this request which I don't like at all and seems pointless, I am adding a new row to StepsData so that I can be the last empty item
-        // and will be replaced by the ingredients as the last item in the recycler view.
         mStepData         = new Step[mRecipe.getSteps().size() + 1];
         mStepData         = mRecipe.getSteps().toArray(mStepData);
         totalIngredients  = mRecipe.getIngredients().size() - 1;
