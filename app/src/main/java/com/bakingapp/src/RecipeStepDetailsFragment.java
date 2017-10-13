@@ -104,7 +104,7 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         // If its landscape Layout it will not contain the container_constraint_layout
         if (mRootView.findViewById(R.id.container_constraint_layout) == null) {
             return mRootView;
-        } else if (getResources().getBoolean(R.bool.isTablet) && getResources().getBoolean(R.bool.isLandscape)) {
+        } else if (getResources().getBoolean(R.bool.isTablet)) {
             mDescriptionTextView = (TextView) mRootView.findViewById(R.id.description_textView);
             mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
             return mRootView;
@@ -114,9 +114,11 @@ public class RecipeStepDetailsFragment extends Fragment implements ExoPlayer.Eve
         mDescriptionTextView.setText(mRecipe.getSteps().get(mRecipeStep).getDescription());
 
         mPreviousButton = (Button) mRootView.findViewById(R.id.previous_button);
+        mPreviousButton.setVisibility(View.VISIBLE);
         mPreviousButton.setOnClickListener(mPreviousButtonClickListener);
 
         mNextButton = (Button) mRootView.findViewById(R.id.next_button);
+        mNextButton.setVisibility(View.VISIBLE);
         mNextButton.setOnClickListener(mNextButtonClickListener);
 
         return mRootView;
