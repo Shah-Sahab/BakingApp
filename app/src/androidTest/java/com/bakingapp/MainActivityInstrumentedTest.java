@@ -76,7 +76,7 @@ public class MainActivityInstrumentedTest {
             protected Integer doInBackground(String... params) {
                 Log.d(TAG, "doInBackground() called with: params = [" + params + "]");
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException ignored) {
                 }
                 return params.length;
